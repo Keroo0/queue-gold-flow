@@ -1,28 +1,34 @@
-import { useEffect } from 'react';
+// ==== BLOK 1: IMPORT KOMPONEN & FUNGSI ====
 import { useQueue } from '@/contexts/QueueContext';
 import { Card } from '@/components/ui/card';
 import { Monitor, Clock, Users } from 'lucide-react';
 
+// ==== BLOK 2: DEFINISI KOMPONEN DISPLAYBOARD ====
 const DisplayBoard = () => {
-  const { queues, currentServing, getWaitingCount } = useQueue();
+  // Mengambil HANYA 'queues' dari Context. Ini adalah satu-satunya sumber data kita.
+  const { queues } = useQueue();
 
+  // ==== BLOK 3: PENGHITUNGAN DATA (BAGIAN YANG DIPERBAIKI) ====
+  // Sama seperti di TellerPage, kita hitung semua nilai yang dibutuhkan
+  // langsung dari array 'queues' yang selalu ter-update.
+  const servingQueue = queues.find(q => q.status === 'serving');
+  const waitingCount = queues.filter(q => q.status === 'waiting').length;
+  const completedCount = queues.filter(q => q.status === 'completed').length;
+  
+  // Mengambil 5 antrean yang baru saja selesai untuk ditampilkan.
   const recentlyServed = queues
     .filter(q => q.status === 'completed')
-    .slice(-5)
-    .reverse();
+    .sort((a, b) => new Date(b.servedAt!).getTime() - new Date(a.servedAt!).getTime()) // Urutkan dari yang terbaru
+    .slice(0, 5);
 
+  // Mengambil 5 antrean berikutnya yang sedang menunggu.
   const upcomingQueues = queues
     .filter(q => q.status === 'waiting')
     .slice(0, 5);
 
-  // Play notification sound when new queue is called (optional)
-  useEffect(() => {
-    if (currentServing) {
-      // You can add audio notification here
-      console.log('Calling:', currentServing);
-    }
-  }, [currentServing]);
-
+  // ==== BLOK 4: RENDER TAMPILAN (JSX) ====
+  // Di bawah ini adalah kode untuk menampilkan seluruh halaman.
+  // Semua nilai statistik sekarang menggunakan variabel yang kita hitung di BLOK 3.
   return (
     <div className="min-h-screen gradient-hero p-6">
       <div className="max-w-7xl mx-auto space-y-6">
@@ -35,16 +41,16 @@ const DisplayBoard = () => {
           <p className="text-xl text-primary-foreground/80">Display Board</p>
         </div>
 
-        {/* Current Serving - Large Display */}
+        {/* Tampilan Nomor yang Sedang Dilayani */}
         <Card className="p-12 bg-card/95 backdrop-blur-sm border-accent/30">
           <div className="text-center space-y-4">
             <p className="text-2xl text-muted-foreground font-medium">
               NOMOR ANTRIAN YANG DILAYANI
             </p>
-            {currentServing ? (
+            {servingQueue ? (
               <div className="gradient-gold rounded-3xl p-12 shadow-gold">
                 <p className="text-9xl font-bold text-accent-foreground animate-pulse-slow">
-                  {currentServing}
+                  {servingQueue.number}
                 </p>
               </div>
             ) : (
@@ -58,7 +64,7 @@ const DisplayBoard = () => {
         </Card>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Recently Served */}
+          {/* Daftar "Baru Saja Dilayani" */}
           <Card className="p-8 bg-card/95 backdrop-blur-sm border-green-500/20">
             <h2 className="text-2xl font-bold mb-6 flex items-center text-foreground">
               <Clock className="mr-3 text-green-500" />
@@ -68,7 +74,7 @@ const DisplayBoard = () => {
               {recentlyServed.length > 0 ? (
                 recentlyServed.map((queue, index) => (
                   <div
-                    key={queue.number}
+                    key={queue.id}
                     className={`p-4 rounded-lg transition-smooth ${
                       index === 0
                         ? 'bg-green-500/20 border-2 border-green-500/30'
@@ -95,17 +101,17 @@ const DisplayBoard = () => {
             </div>
           </Card>
 
-          {/* Upcoming Queues */}
+          {/* Daftar "Antrian Berikutnya" */}
           <Card className="p-8 bg-card/95 backdrop-blur-sm border-primary/20">
             <h2 className="text-2xl font-bold mb-6 flex items-center text-foreground">
               <Users className="mr-3 text-primary" />
-              Antrian Berikutnya ({getWaitingCount()})
+              Antrian Berikutnya ({waitingCount})
             </h2>
             <div className="space-y-3">
               {upcomingQueues.length > 0 ? (
                 upcomingQueues.map((queue, index) => (
                   <div
-                    key={queue.number}
+                    key={queue.id}
                     className={`p-4 rounded-lg transition-smooth ${
                       index === 0
                         ? 'gradient-primary border-2 border-primary/30'
@@ -141,20 +147,16 @@ const DisplayBoard = () => {
           </Card>
         </div>
 
-        {/* Footer Info */}
+        {/* Footer Info Statistik */}
         <Card className="p-6 bg-card/80 backdrop-blur-sm border-accent/10">
           <div className="flex items-center justify-center space-x-8 text-sm text-muted-foreground">
             <div className="flex items-center">
-              <span className="w-3 h-3 rounded-full bg-accent mr-2 animate-pulse"></span>
-              Waktu Pemrosesan: 10 detik
-            </div>
-            <div className="flex items-center">
               <span className="w-3 h-3 rounded-full bg-primary mr-2"></span>
-              Antrian Menunggu: {getWaitingCount()}
+              Antrian Menunggu: {waitingCount}
             </div>
             <div className="flex items-center">
               <span className="w-3 h-3 rounded-full bg-green-500 mr-2"></span>
-              Total Dilayani: {queues.filter(q => q.status === 'completed').length}
+              Total Dilayani: {completedCount}
             </div>
           </div>
         </Card>
