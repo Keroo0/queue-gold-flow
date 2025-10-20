@@ -30,6 +30,10 @@ const TicketPage = () => {
       toast.error('Antrian penuh atau terjadi error.');
     }
   };
+  const back = () =>{
+    window.location.href= '/';
+
+  }
 
   const handleResetQueue = () => {
     resetQueue();
@@ -43,7 +47,7 @@ const TicketPage = () => {
         {/* Header */}
         <div className="text-center space-y-4">
           <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-accent/20 backdrop-blur-sm mb-4">
-            <Ticket className="w-10 h-10 text-accent animate-shine" />
+            <Ticket className="w-10 h-10 text-accent animate-shine" onClick={back}/>
           </div>
           <h1 className="text-5xl font-bold text-primary-foreground">
             Sistem Antrian Bank

@@ -52,6 +52,10 @@ const TellerPage = () => {
     toast.success(`Pelayanan untuk nomor ${servingQueue.number} selesai`);
   };
 
+  const back = () =>{
+    window.location.href= '/';
+
+  }
 
   // ==== BLOK 5: RENDER TAMPILAN (JSX) ====
   // Di bawah ini adalah kode untuk menampilkan seluruh halaman.
@@ -62,7 +66,7 @@ const TellerPage = () => {
       <div className="gradient-primary text-primary-foreground p-6 shadow-elegant">
         <div className="max-w-7xl mx-auto">
           <h1 className="text-3xl font-bold flex items-center">
-            <PhoneCall className="mr-3 w-8 h-8" />
+            <PhoneCall className="mr-3 w-8 h-8" onClick={back}/>
             Dashboard Teller
           </h1>
           <p className="text-primary-foreground/80 mt-2">

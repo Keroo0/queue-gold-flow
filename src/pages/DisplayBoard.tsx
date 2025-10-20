@@ -26,6 +26,10 @@ const DisplayBoard = () => {
     .filter(q => q.status === 'waiting')
     .slice(0, 5);
 
+  const back = () =>{
+    window.location.href= '/';
+
+  }
   // ==== BLOK 4: RENDER TAMPILAN (JSX) ====
   // Di bawah ini adalah kode untuk menampilkan seluruh halaman.
   // Semua nilai statistik sekarang menggunakan variabel yang kita hitung di BLOK 3.
@@ -35,7 +39,7 @@ const DisplayBoard = () => {
         {/* Header */}
         <div className="text-center text-primary-foreground space-y-2">
           <div className="flex items-center justify-center mb-4">
-            <Monitor className="w-12 h-12 text-accent animate-shine" />
+            <Monitor className="w-12 h-12 text-accent animate-shine" onClick={back}/>
           </div>
           <h1 className="text-5xl font-bold">BANK ANTRIAN SYSTEM</h1>
           <p className="text-xl text-primary-foreground/80">Display Board</p>
