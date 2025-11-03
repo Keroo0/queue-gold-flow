@@ -9,6 +9,7 @@ import TicketPage from "./pages/TicketPage";
 import TellerPage from "./pages/TellerPage";
 import DisplayBoard from "./pages/DisplayBoard";
 import NotFound from "./pages/NotFound";
+import StatusPage from "./pages/StatusPage";
 
 const queryClient = new QueryClient();
 
@@ -24,6 +25,9 @@ const App = () => (
             <Route path="/ticket" element={<TicketPage />} />
             <Route path="/teller" element={<TellerPage />} />
             <Route path="/display" element={<DisplayBoard />} />
+             {/* ':ticketNumber' adalah parameter dinamis */}
+            <Route path="/status/:ticketNumber" element={<StatusPage />} />
+
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
